@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DiagDaddy • Choose Your Motorcycle Brand</title>
+  <meta name="description" content="DiagDaddy – interactive motorcycle diagnostic prompts for riders and service advisors. Select your brand (BMW, Kawasaki, Yamaha or Honda) to generate realistic customer statements, questions and responses.">
+  <style>
+  :root{
+    --ink:#f5f7fb;
+    --muted:#9fb0cc;
+    --accent:#1c69d4;
+    --accent2:#63a0ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:system-ui,-apple-system,Segoi UI,Roboto,Helvetica,Arial;
+    color:var(--ink);
+    background:#000;
+    overflow:hidden;
+  }
+  /* Background slideshow: fade between hero images for each brand */
+  .bg{
+    position:fixed;
+    inset:0;
+    z-index:-3;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    transition:background-image 1.2s ease-in-out;
+  }
+  .bg::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to left, #00000000 0%, #000000f0 55%);
+  }
+  main{
+    position:relative;
+    z-index:1;
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    padding-left:8vw;
+  }
+  .brand-links{
+    display:flex;
+    flex-direction:column;
+    gap:1.4rem;
+  }
+  .brand-link{
+    font-size:2rem;
+    font-weight:600;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink);
+    text-decoration:none;
+    cursor:pointer;
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .brand-link:hover{
+    opacity:.8;
+    transform:translateX(4px);
+  }
+  .brand-link.disabled{
+    opacity:.4;
+    cursor:default;
+    pointer-events:none;
+  }
+  @media(max-width:720px){
+    .brand-link{font-size:1.5rem;}
+  }
+  </style>
+</head>
+<body>
+  <!-- rotating background images for each brand -->
+  <div class="bg"></div>
+  <main>
+    <nav class="brand-links" aria-label="Choose motorcycle brand">
+      <a href="bmw.html" class="brand-link">BMW</a>
+      <a href="kawasaki.html" class="brand-link">Kawasaki</a>
+      <a href="yamaha.html" class="brand-link">Yamaha</a>
+      <a href="honda.html" class="brand-link">Honda</a>
+    </nav>
+  </main>
+  <script>
+  // Rotating hero images – one per brand
+  const slides=[
+    "https://www.motorcyclenews.com/wp-images/5022/bmw_m1000rr_01.jpg",
+    "https://s1.cdn.autoevolution.com/images/moto_gallery/kawasaki-ninja-zx-6r-abs-2025-15375_1.jpg",
+    "https://www.revzilla.com/blog_content_image/image/97760/redline_hero/2025_YZF-R9_OTOG_hero_image.png",
+    "https://www.motorcyclenews.com/wp-images/4890/honda-cbr1000rr-r-sp-30th-anniversary-01.jpg"
+  ];
+  const bg=document.querySelector('.bg');
+  let i=0;
+  function setSlide(idx){
+    bg.style.backgroundImage=`url('${slides[idx]}')`;
+  }
+  setSlide(i);
+  setInterval(()=>{
+    i=(i+1)%slides.length;
+    setSlide(i);
+  },8000);
+  </script>
+</body>
+</html>

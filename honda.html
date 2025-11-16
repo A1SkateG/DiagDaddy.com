@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DiagDaddy • Honda Motorcycles</title>
+  <meta name="description" content="DiagDaddy – diagnostic prompts for Honda bikes like CBR, Africa Twin, Gold Wing and Rebel. Generate realistic customer statements and service questions.">
+<style>
+:root{
+  --ink:#f5f7fb;
+  --muted:#9fb0cc;
+  --accent:#ff1744; /* Honda red accent */
+  --accent2:#ff5252;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--ink);
+  background:#000;
+  overflow:hidden;
+}
+
+/* BACKGROUND IMAGE (Honda shot) with gradient overlay */
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background:url("https://www.motorcyclenews.com/wp-images/4890/honda-cbr1000rr-r-sp-30th-anniversary-01.jpg") center/cover no-repeat fixed;
+}
+.bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 45%);
+}
+
+/* soft HUD grid */
+.fx-grid::before{
+  content:""; position:fixed; inset:-2px; pointer-events:none; z-index:-1;
+  background:
+    linear-gradient(transparent 96%, rgba(140,170,230,.25) 97%) 0 0/40px 40px,
+    linear-gradient(90deg, transparent 96%, rgba(50,120,220,.25) 97%) 0 0/40px 40px;
+  opacity:.22; mix-blend-mode:soft-light;
+}
+
+/* tiny header pill */
+.topbar{
+  position:fixed; left:4vw; top:16px; z-index:2;
+  display:flex; align-items:center; gap:10px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(6,12,24,.9),rgba(8,16,32,.6));
+  backdrop-filter:blur(10px);
+}
+.dot{
+  width:22px;height:22px;border-radius:50%;
+  background:conic-gradient(#fff 0 25%, var(--accent) 0 50%, #000 0 75%, var(--accent2) 0 100%);
+  border:2px solid #050910;
+}
+.title-main{
+  font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+}
+.title-sub{
+  font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.12em;
+}
+
+/* bottom HUD */
+.hud{
+  position:fixed;
+  inset:auto 4vw 4vw 4vw;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:18px;
+}
+.block-left{
+  flex:1.2;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.block-right{
+  flex:1;
+  max-width:420px;
+}
+
+/* controls strip */
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  padding:7px 10px;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(4,8,16,.86),rgba(8,16,30,.78));
+  backdrop-filter:blur(14px);
+  box-shadow:0 18px 40px rgba(0,0,0,.8);
+}
+label{font-size:11px;color:var(--muted);}
+
+select,input{
+  font:inherit; color:var(--ink);
+  background:transparent;
+  border:none;
+  border-bottom:1px solid rgba(170,190,230,.5);
+  padding:3px 0;
+  margin-left:4px;
+}
+select#modelS,
+select#yearS,
+select#systemS{
+  background:linear-gradient(135deg, rgba(3,6,12,.95), rgba(12,20,38,.9));
+  border:1px solid rgba(34,56,88,.9);
+  border-radius:14px;
+  padding:6px 10px;
+  margin-left:4px;
+  color:var(--ink);
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+}
+select#modelS option,
+select#yearS option,
+select#systemS option{
+  background:linear-gradient(135deg, rgba(3,6,12,.95), rgba(12,20,38,.9));
+  color:var(--ink);
+}
+select:focus,input:focus{
+  outline:none;
+  border-color:var(--accent2);
+}
+
+.btn{
+  padding:7px 14px;
+  border-radius:999px;
+  border:1px solid rgba(150,180,230,.6);
+  background:radial-gradient(180px 80px at 0% 0%, rgba(99,160,255,.45), transparent 60%),
+             linear-gradient(180deg,rgba(8,14,28,.95),rgba(5,9,18,.9));
+  color:var(--ink);
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.btn.acc{
+  border-color:rgba(40,140,255,.9);
+  background:linear-gradient(180deg,var(--accent),var(--accent2));
+  color:#050915;
+  font-weight:700;
+}
+.btn small{opacity:.8;font-size:9px;text-transform:none;letter-spacing:normal}
+
+.tag-toggle{
+  display:inline-flex;
+  border-radius:999px;
+  padding:3px;
+  background:rgba(6,10,18,.9);
+  border:1px solid rgba(90,120,170,.7);
+}
+.tag-toggle button{
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-size:10px;
+  padding:4px 10px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.tag-toggle button.active{
+  background:rgba(82,140,255,.95);
+  color:#050915;
+}
+
+.card{
+  padding:10px 12px 11px;
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(3,6,12,.9),rgba(12,20,38,.82));
+  backdrop-filter:blur(16px);
+  box-shadow:0 22px 60px rgba(0,0,0,.85);
+  border:1px solid rgba(34,56,88,.9);
+}
+.card h3{
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  color:rgba(200,214,244,.9);
+}
+.small{font-size:11px;color:var(--muted);}
+textarea{
+  width:100%;
+  margin-top:4px;
+  border:none;
+  background:transparent;
+  color:var(--ink);
+  font-size:13px;
+  resize:none;
+  min-height:70px;
+}
+textarea:focus{outline:none;}
+.meta{margin-top:4px;font-size:10px;color:var(--muted);}
+
+.photo-shell{
+  border-radius:16px;
+  overflow:hidden;
+  background:radial-gradient(140% 200% at 100% 0%,rgba(140,180,255,.28),rgba(2,4,10,.94));
+  backdrop-filter:blur(14px);
+  box-shadow:0 26px 70px rgba(0,0,0,.9);
+  border:1px solid rgba(60,90,150,.85);
+}
+.photo-wrap{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.photo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:contrast(1.08) saturate(1.04);
+}
+.placeholder{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--muted);
+}
+.photo-meta{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 9px 7px;
+  font-size:10px;
+  color:var(--muted);
+}
+.photo-meta strong{
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:10px;
+}
+
+@media(max-width:900px){
+  .hud{flex-direction:column-reverse;align-items:stretch}
+  .block-right{max-width:none;}
+}
+</style>
+</head>
+<body>
+<div class="bg fx-grid"></div>
+
+<div class="topbar">
+  <div class="dot"></div>
+  <div>
+    <div class="title-main">Honda Motorcycles</div>
+    <div class="title-sub">simple diagnostic prompts</div>
+  </div>
+  <!-- link to home page -->
+  <a href="index.html" style="margin-left:14px;font-size:11px;color:var(--muted);text-decoration:none;">Home</a>
+</div>
+
+<div class="hud">
+  <div class="block-left">
+    <div class="toolbar">
+      <div class="tag-toggle">
+        <button id="segRandom" class="active">Random</button>
+        <button id="segManual">Manual</button>
+      </div>
+      <div id="manualInputs" class="row" style="display:none">
+        <label>Model
+          <select id="modelS"></select>
+        </label>
+        <label>Year
+          <select id="yearS"></select>
+        </label>
+        <label>System
+          <select id="systemS"></select>
+        </label>
+        <label>Index
+          <input id="idxS" type="number" min="1" max="50000" value="1" style="width:70px" />
+        </label>
+      </div>
+      <button id="genSimple" class="btn acc">
+        Generate <small>(G)</small>
+      </button>
+    </div>
+    <div class="card">
+      <h3>Customer Statement</h3>
+      <p class="small">Plain language, the way the rider would actually say it.</p>
+      <textarea id="csSimple" readonly></textarea>
+      <p id="simpleMeta" class="meta"></p>
+    </div>
+  </div>
+  <div class="block-right">
+    <div class="photo-shell">
+      <div class="photo-wrap">
+        <img id="simplePhoto" class="photo" alt="Honda motorcycle image" />
+        <div id="simplePlaceholder" class="placeholder" style="display:none">NO IMAGE</div>
+      </div>
+      <div class="photo-meta">
+        <strong id="simpleCaption"></strong>
+        <span id="simpleCredit"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// -------- DATA --------
+/*
+ * Honda models and their production years.  The CBR600RR has been
+ * produced since 2003【656348526039722†L148-L154】, the CBR1000RR since
+ * 2004【284704302091413†L142-L145】, Africa Twin (CRF1000L/1100L) since
+ * 2015【285060465670231†L131-L138】, the Gold Wing from 1974【561250721273712†L168-L174】,
+ * and the CMX500 Rebel (Rebel 500) since 2017【864713356490732†L119-L123】.
+ */
+const MODELS=[
+  {model:'CBR600RR', start:2003, end:2025},
+  {model:'CBR1000RR', start:2004, end:2025},
+  {model:'Africa Twin', start:2015, end:2025},
+  {model:'Gold Wing', start:1974, end:2025},
+  {model:'Rebel 500', start:2017, end:2025}
+];
+const SYSTEMS=["STARTING","FUEL","ELECTRICAL","INTAKE","BRAKES","ENGINE_MECHANICAL"];
+const IMAGE_INDEX={
+  'CBR1000RR': {
+    url:'https://upload.wikimedia.org/wikipedia/commons/d/d4/Honda_CBR1000RR_Castrol.jpg',
+    credit:'Wikimedia Commons'
+  }
+};
+const $ = s => document.querySelector(s);
+
+function hashString(s){
+  let h=1779033703^s.length;
+  for(let i=0;i<s.length;i++){
+    h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19;
+  }
+  return h>>>0;
+}
+function RNG(seed){
+  let x=seed>>>0;
+  return{
+    next(){x^=x<<13;x^=x>>>17;x^=x<<5;return(x>>>0)/4294967296},
+    int(n){return Math.floor(this.next()*n)}
+  };
+}
+
+const LIB={
+  STARTING:{stm:[
+    "it won't start",
+    "the starter just clicks",
+    "it cranks but never fires",
+    "it only starts with a jump",
+    "it only starts sometimes",
+    "it stalls right after starting"
+  ], q:[
+    "how many miles are on the bike?",
+    "does the starter turn the engine over?",
+    "have you tried charging or jumping the battery?",
+    "do you hear a clicking noise when pressing start?",
+    "was the bike sitting for a long time?"
+  ], rsp:[
+    "Sounds like the battery may be weak or the starter circuit is having issues. We'll check connections and battery health.",
+    "A clicking starter usually means a dead battery or bad solenoid. We'll test the electrical system.",
+    "If it cranks but doesn't fire, we'll look at fuel and ignition components for problems.",
+    "Intermittent starting can be caused by loose wiring or a failing starter relay. We'll diagnose it.",
+    "Stalling right after starting could indicate a fuel delivery issue or idle adjustment. We'll investigate."
+  ]},
+  FUEL:{stm:[
+    "it runs out of fuel quickly",
+    "the fuel gauge doesn't work",
+    "it smells like gas",
+    "there's fuel leaking",
+    "engine sputters at high speed"
+  ],q:[
+    "when did you last fill up?",
+    "do you see any leaks?",
+    "does it stall at idle or when accelerating?",
+    "have you checked the fuel petcock and hoses?",
+    "does the fuel light turn on?"
+  ],rsp:[
+    "We'll inspect the fuel lines and tank for leaks and test the fuel pump.",
+    "A faulty fuel gauge could be the sending unit or wiring; we'll test it.",
+    "Fuel smell or visible leaks means a line or gasket might be compromised; we'll address it.",
+    "Sputtering at speed might be from a clogged fuel filter or injector issue; we'll diagnose accordingly."
+  ]},
+  ELECTRICAL:{stm:[
+    "lights flicker while riding",
+    "battery keeps dying",
+    "fuses blow repeatedly",
+    "dash lights are dim",
+    "horn stopped working"
+  ],q:[
+    "have you added any accessories?",
+    "do you see corrosion on terminals?",
+    "when was the battery last replaced?",
+    "does the problem happen at idle or while riding?",
+    "are any warning lights on?"
+  ],rsp:[
+    "We'll check the charging system and battery connections for faults.",
+    "Repeated fuse failures could indicate a short circuit; we'll trace and repair it.",
+    "Dim lights often point to a weak battery or failing stator; we'll test output.",
+    "A dead horn might be a bad switch or relay; we'll diagnose and replace if needed."
+  ]},
+  INTAKE:{stm:[
+    "it backfires through the intake",
+    "throttle is sluggish",
+    "air filter is dirty",
+    "engine hesitates when opening throttle",
+    "rough idle"
+  ],q:[
+    "when was the air filter last changed?",
+    "are there any mods to the intake?",
+    "does it idle smoothly?",
+    "have you synced the throttle bodies recently?",
+    "does it improve with choke?"
+  ],rsp:[
+    "A dirty air filter or intake leak can cause backfires; we'll inspect and clean.",
+    "Sluggish throttle response may be due to clogged injectors or throttle body issues; we'll service them.",
+    "Hesitation on acceleration could come from improper fuel/air mixture; we'll adjust it.",
+    "Rough idle often indicates intake or vacuum leaks; we'll diagnose and correct."
+  ]},
+  BRAKES:{stm:[
+    "brakes feel spongy",
+    "it pulls when braking",
+    "there's a squeal from the brakes",
+    "brake light stays on",
+    "ABS warning light is lit"
+  ],q:[
+    "when were the pads last replaced?",
+    "is the fluid level correct?",
+    "does the lever/pedal feel firm?",
+    "have you noticed any leaks?",
+    "is the ABS light flashing or solid?"
+  ],rsp:[
+    "Spongy brakes typically mean air in the lines or old fluid; we'll bleed and replace it.",
+    "Pulling during braking may come from uneven pad wear or rotor issues; we'll inspect.",
+    "Squealing often indicates worn pads; we'll check pad thickness and rotors.",
+    "A stuck brake light could be a bad switch; we'll test and replace if necessary.",
+    "ABS warnings require a diagnostic scan; we'll read the codes and address the issue."
+  ]},
+  ENGINE_MECHANICAL:{stm:[
+    "there's a knocking noise",
+    "excessive vibration",
+    "oil leaks",
+    "engine overheats",
+    "low oil pressure warning"
+  ],q:[
+    "does the noise increase with RPM?",
+    "when was the oil last changed?",
+    "do you see oil on the ground or engine?",
+    "does the temperature gauge rise quickly?",
+    "have any warning lights come on?"
+  ],rsp:[
+    "Knocking noises can indicate bearing issues; we'll check for wear.",
+    "Vibration might come from misfiring cylinders or engine mounts; we'll inspect.",
+    "Oil leaks need to be located and sealed; we'll clean and test.",
+    "Overheating could be due to coolant issues or blocked radiators; we'll diagnose.",
+    "Low oil pressure warnings require immediate attention; we'll test pressure and investigate."
+  ]}
+};
+
+function populateModels(){
+  const sel=document.querySelector('#modelS');
+  sel.innerHTML='';
+  MODELS.forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.model;
+    o.textContent=m.model;
+    sel.appendChild(o);
+  });
+}
+function populateYears(model){
+  const yrSel=document.querySelector('#yearS');
+  yrSel.innerHTML='';
+  const m=MODELS.find(x=>x.model===model);
+  if(!m) return;
+  for(let y=m.start; y<=m.end; y++){
+    const o=document.createElement('option');
+    o.value=y;
+    o.textContent=y;
+    yrSel.appendChild(o);
+  }
+}
+function populateSystems(){
+  const sel=document.querySelector('#systemS');
+  sel.innerHTML='';
+  SYSTEMS.forEach(s=>{
+    const o=document.createElement('option');
+    o.value=s;
+    o.textContent=s;
+    sel.appendChild(o);
+  });
+}
+function buildStatement(model,year,sys,idx){
+  const seedStr=`${model}-${year}-${sys}-${idx}`;
+  const rng=RNG(hashString(seedStr));
+  const seg=LIB[sys];
+  const stm=seg.stm[rng.int(seg.stm.length)];
+  const rsp=seg.rsp[rng.int(seg.rsp.length)];
+  const q=seg.q[rng.int(seg.q.length)];
+  return {stm,rsp,q};
+}
+function setPhoto(model){
+  const entry=IMAGE_INDEX[model];
+  const img=document.querySelector('#simplePhoto');
+  const cap=document.querySelector('#simpleCaption');
+  const cred=document.querySelector('#simpleCredit');
+  const placeholder=document.querySelector('#simplePlaceholder');
+  if(entry && entry.url){
+    img.src=entry.url;
+    cap.textContent=model;
+    cred.textContent=entry.credit||'';
+    img.style.display='';
+    placeholder.style.display='none';
+  } else {
+    img.src='';
+    img.style.display='none';
+    placeholder.style.display='';
+    cap.textContent=model;
+    cred.textContent='';
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  populateModels();
+  populateSystems();
+  populateYears(MODELS[0].model);
+  document.querySelector('#modelS').addEventListener('change',e=>{
+    populateYears(e.target.value);
+  });
+  function generate(){
+    const isRand=document.getElementById('segRandom').classList.contains('active');
+    let model,year,system,idx;
+    if(isRand){
+      const rand=Math.floor(Math.random()*MODELS.length);
+      model=MODELS[rand].model;
+      const m=MODELS[rand];
+      year=Math.floor(Math.random()*(m.end-m.start+1))+m.start;
+      system=SYSTEMS[Math.floor(Math.random()*SYSTEMS.length)];
+      idx=Math.floor(Math.random()*50000)+1;
+    } else {
+      model=document.querySelector('#modelS').value;
+      year=parseInt(document.querySelector('#yearS').value);
+      system=document.querySelector('#systemS').value;
+      idx=parseInt(document.querySelector('#idxS').value);
+    }
+    const {stm,rsp,q}=buildStatement(model,year,system,idx);
+    document.querySelector('#csSimple').value=`${stm}\n\n${rsp}\n\n${q}`;
+    document.querySelector('#simpleMeta').textContent=`${model} • ${year} • ${system} (#${idx})`;
+    setPhoto(model);
+  }
+  document.getElementById('segRandom').addEventListener('click',()=>{
+    document.getElementById('segRandom').classList.add('active');
+    document.getElementById('segManual').classList.remove('active');
+    document.getElementById('manualInputs').style.display='none';
+  });
+  document.getElementById('segManual').addEventListener('click',()=>{
+    document.getElementById('segManual').classList.add('active');
+    document.getElementById('segRandom').classList.remove('active');
+    document.getElementById('manualInputs').style.display='';
+  });
+  document.getElementById('genSimple').addEventListener('click',generate);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='g' || e.key==='G') generate();
+  });
+  generate();
+});
+</script>
+</body>
+</html>
