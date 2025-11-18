@@ -5,74 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DiagDaddy • Choose Your Motorcycle Brand</title>
   <meta name="description" content="DiagDaddy – interactive motorcycle diagnostic prompts for riders and service advisors. Select your brand (BMW, Kawasaki, Yamaha or Honda) to generate realistic customer statements, questions and responses.">
-  <style>
-  :root{
-    --ink:#f5f7fb;
-    --muted:#9fb0cc;
-    --accent:#1c69d4;
-    --accent2:#63a0ff;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    font-family:system-ui,-apple-system,Segoi UI,Roboto,Helvetica,Arial;
-    color:var(--ink);
-    background:#000;
-    overflow:hidden;
-  }
-  /* Background slideshow: fade between hero images for each brand */
-  .bg{
-    position:fixed;
-    inset:0;
-    z-index:-3;
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    transition:background-image 1.2s ease-in-out;
-  }
-  .bg::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(to left, #00000000 0%, #000000f0 55%);
-  }
-  main{
-    position:relative;
-    z-index:1;
-    min-height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    padding-left:8vw;
-  }
-  .brand-links{
-    display:flex;
-    flex-direction:column;
-    gap:1.4rem;
-  }
-  .brand-link{
-    font-size:2rem;
-    font-weight:600;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-    color:var(--ink);
-    text-decoration:none;
-    cursor:pointer;
-    transition:opacity .18s ease, transform .18s ease;
-  }
-  .brand-link:hover{
-    opacity:.8;
-    transform:translateX(4px);
-  }
-  .brand-link.disabled{
-    opacity:.4;
-    cursor:default;
-    pointer-events:none;
-  }
-  @media(max-width:720px){
-    .brand-link{font-size:1.5rem;}
-  }
-  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="">
 </head>
 <body>
   <!-- rotating background images for each brand -->
