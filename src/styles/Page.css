@@ -1,0 +1,37 @@
+/*
+  Page styles for generic sections like Training Center, Learning Center and Leaderboards.
+  These classes provide consistent spacing, typography and layout for informational pages.
+*/
+
+/* The .page container uses the global .container utility for horizontal centring.
+   We add extra top padding here to prevent the content from appearing behind the fixed nav bar. */
+.page {
+  padding-top: 6rem;
+  padding-bottom: 4rem;
+}
+
+/* Page titles are larger and more prominent than subtitles. */
+.page__title {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  color: #f5f7fb;
+  text-align: center;
+}
+
+/* Subtitles provide a concise explanation beneath the title. */
+.page__subtitle {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #c0c8dd;
+  text-align: center;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Paragraph text spacing for page content. */
+.page p {
+  margin-bottom: 1rem;
+  color: #d0d6e6;
+  line-height: 1.6;
+}

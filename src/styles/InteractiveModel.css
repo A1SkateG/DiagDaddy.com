@@ -1,0 +1,10 @@
+/* Styles specific to the InteractiveModel component. */
+
+.interactive-model {
+  width: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, rgba(28, 105, 212, 0.2), rgba(5, 7, 11, 0.95) 80%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}

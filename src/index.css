@@ -1,0 +1,57 @@
+/*
+  Global styles for the Diag‑Daddy React app.
+  Defines CSS custom properties for colours and resets basic layout margins.
+*/
+
+:root {
+  --ink: #05070b;
+  --muted: #5193fd;
+  --accent: #1c69d4;
+  --accent2: #63a0ff;
+  --highlight-color: #ff3366; /* default highlight colour for 3D model */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background-color: var(--ink);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent2);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Simple utility classes */
+.container {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+}
+
+.btn {
+  display: inline-block;
+  background-color: var(--accent);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent2);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}

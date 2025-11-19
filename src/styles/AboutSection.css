@@ -1,0 +1,45 @@
+/* Styles for the AboutSection component. */
+
+.about-section {
+  padding: 4rem 0 6rem;
+  text-align: center;
+}
+
+.about-grid {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.about-card {
+  background-color: #05070b;
+  border: 1px solid #1a1f2b;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.about-card h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1.15rem;
+  color: #f5f7fb;
+}
+
+.about-card p {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #d0d6e6;
+  line-height: 1.5;
+}
+
+.card-link {
+  font-size: 0.9rem;
+  color: var(--accent2);
+  font-weight: 600;
+}
+
+.card-link:hover {
+  text-decoration: underline;
+}
